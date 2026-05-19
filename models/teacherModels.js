@@ -25,7 +25,6 @@ export const getAllClasses = async () => {
         .selectFrom(classes)
         .selectAll()
         .execute();
-
 }
 
 export const createClass = async (data) => {
@@ -76,13 +75,13 @@ export const addUser = async (data) => {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const result = await db
-        .insertInto("users")
+        .insertInto(users)
         .values({
             user_id: data.user_id,
             username: data.username,
             password: hashedPassword,
-            firstName: data.firstName,
-            lastName: data.lastName,
+            firstname: data.firstName,
+            lastname: data.lastName,
             email: data.email,
             role: data.role,
             created_date: new Date()
@@ -119,20 +118,27 @@ export const getAttendancePerStudent = async (student_id, class_id) => {
 
 export const getTeachers = async () => {
     return await db
-        .selectFrom(users)
-        .selectAll()
-        .where("role", "=", "teacher")
+        .selectFrom("users as u")
+        .selectAll("u")
+        .select([
+            "u.firstname as firstName",
+            "u.lastname as lastName",
+        ])
+        .where("u.role", "=", "teacher")
         .execute();
 }
 
 export const getStudents = async () => {
     return await db
-        .selectFrom(users)
-        .selectAll()
-        .where("role", "=", "student")
+        .selectFrom("users as u")
+        .selectAll("u")
+        .select([
+            "u.firstname as firstName",
+            "u.lastname as lastName",
+        ])
+        .where("u.role", "=", "student")
         .execute();
 }
-
 export const getSubjects = async (teacher_id) => {
     return await db
         .selectFrom("classes as c")
@@ -189,7 +195,6 @@ export const classesAndSubject = async (teacher_id) => {
         .innerJoin('subjects as sub', 'sub.subject_id', 'c.subject_id')
 
         .leftJoin('class_schedules as cs', 'cs.class_id', 'c.class_id')
-
         .leftJoin('enrolled_students as es', 'es.class_id', 'c.class_id')
         .leftJoin('users as u', 'u.user_id', 'es.student_id')
 
@@ -215,8 +220,8 @@ export const classesAndSubject = async (teacher_id) => {
             'es.student_id',
             'es.enrolled_at',
 
-            'u.firstName',
-            'u.lastName',
+            'u.firstname as firstName',
+            'u.lastname as lastName',
         ])
 
         .where('c.teacher_id', '=', teacher_id)
@@ -244,7 +249,7 @@ export const getSectionsWithClasses = async (teacher_id) => {
         .execute();
 };
 
-export const  getEnrolledStudentsByTeacher = async (teacher_id) => {
+export const getEnrolledStudentsByTeacher = async (teacher_id) => {
     return await db
         .selectFrom('enrolled_students as es')
 
@@ -255,8 +260,8 @@ export const  getEnrolledStudentsByTeacher = async (teacher_id) => {
 
         .select([
             'u.user_id',
-            'u.firstName',
-            'u.lastName',
+            'u.firstname as firstName',
+            'u.lastname as lastName',
             'u.email',
 
             'c.class_id',

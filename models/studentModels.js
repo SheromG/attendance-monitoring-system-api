@@ -66,8 +66,8 @@ export const studentClassesAndSubject = async (student_id) => {
             'cs.end_time',
             'cs.assigned_room',
 
-            'u.firstName as teacher_firstName',
-            'u.lastName as teacher_lastName',
+            'u.firstname as teacher_firstName',
+            'u.lastname as teacher_lastName',
 
             'attendance.attendance_id',
             'attendance.student_id',
