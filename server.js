@@ -34,12 +34,12 @@ app.post("/login", async (req, res) => {
             "user_id",
             "username",
             "password",
-            "firstName",
-            "lastName",
+            "firstname as firstName",
+            "lastname as lastName",
             "email",
             "role"
         ])
-        .where("userName", "=", userName)
+        .where("username", "=", userName)
         .executeTakeFirst();
 
     if(!user) return res.status(404).json({ message: "User not found" });

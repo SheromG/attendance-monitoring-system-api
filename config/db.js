@@ -1,18 +1,20 @@
-import mysql from "mysql2";
-import { Kysely, MysqlDialect } from "kysely";
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false,},
+    max: 5,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
+});
+
 const db = new Kysely({
-    dialect: new MysqlDialect({
-        pool: mysql.createPool({
-            host: process.env.DB_HOST,  
-            port: process.env.DB_PORT || 3306,  
-            user: process.env.DB_USER,  
-            password: process.env.DB_PASSWORD,  
-            database: process.env.DB_NAME
-        }),
+    dialect: new PostgresDialect({
+        pool,
     }),
 });
 
